@@ -8,7 +8,7 @@ const renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance"
 });
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 mount.appendChild(renderer.domElement);
@@ -19,7 +19,7 @@ const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 const uniforms = {
   uTime: { value: 0 },
   uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-  uColorA: { value: new THREE.Color("#a7b4bf") },
+  uColorA: { value: new THREE.Color("#5fb8a8") },
   uColorB: { value: new THREE.Color("#e8b968") },
   uColorC: { value: new THREE.Color("#ffd98a") },
   uColorD: { value: new THREE.Color("#3a6f9a") },
@@ -153,19 +153,19 @@ const material = new THREE.ShaderMaterial({
       float dC = blob(warp, centerC, stretchC);
       float dD = blob(warp, centerD, stretchD);
 
-      float m1 = smin(dA, dB, 0.34);
-      float m2 = smin(dC, dD, 0.34);
-      float field = smin(m1, m2, 0.42);
+      float m1 = smin(dA, dB, 0.22);
+      float m2 = smin(dC, dD, 0.22);
+      float field = smin(m1, m2, 0.28);
 
-      float cyanOrb = smoothstep(1.08, 0.08, dA);
-      float blueOrbA = smoothstep(1.06, 0.08, dB);
-      float blueOrbB = smoothstep(1.1, 0.08, dC);
-      float redOrb = smoothstep(1.04, 0.08, dD);
-      float mergedGlow = smoothstep(1.12, 0.02, field);
+      float cyanOrb = smoothstep(0.92, 0.18, dA);
+      float blueOrbA = smoothstep(0.9, 0.18, dB);
+      float blueOrbB = smoothstep(0.94, 0.18, dC);
+      float redOrb = smoothstep(0.88, 0.18, dD);
+      float mergedGlow = smoothstep(0.96, 0.05, field);
       float pointerField = smoothstep(0.82, 0.0, blob(warp, (uPointer - 0.5) * aspect * 0.5, vec2(0.54, 0.42)));
 
       vec3 color = vec3(0.03, 0.07, 0.11);
-      color += uColorA * cyanOrb * mix(0.62, 0.78, inhale);
+      color += uColorA * cyanOrb * mix(0.78, 0.95, inhale);
       color += uColorD * blueOrbA * mix(0.95, 1.15, inhale);
       color += uColorB * blueOrbB * mix(0.6, 0.78, exhale);
       color += uColorC * redOrb * mix(0.85, 1.05, inhale);
@@ -196,8 +196,10 @@ const material = new THREE.ShaderMaterial({
       color *= haze;
       color += vec3(0.018, 0.022, 0.03);
 
-      color = 1.0 - exp(-color * 1.12);
-      color = pow(color, vec3(0.98));
+      color = 1.0 - exp(-color * 1.35);
+      // S-curve contrast for crisper midtones
+      color = pow(color, vec3(0.92));
+      color = mix(vec3(dot(color, vec3(0.299, 0.587, 0.114))), color, 1.18);
 
       // --- film grain: subtle cinematic noise ---
       float grain = hash(gl_FragCoord.xy + fract(t) * 91.17) - 0.5;
@@ -215,7 +217,7 @@ function onResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   uniforms.uResolution.value.set(width, height);
 }
 
