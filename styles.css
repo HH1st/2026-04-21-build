@@ -1,9 +1,9 @@
 :root {
-  --bg: #07111a;
-  --bg-deep: #02070c;
-  --cyan: #39efff;
-  --blue: #4f6fff;
-  --red: #ff315a;
+  --bg: #0b1220;
+  --bg-deep: #05080f;
+  --cyan: #a7b4bf;
+  --blue: #556b80;
+  --red: #e8e6e1;
 }
 
 * {
@@ -15,7 +15,7 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow: hidden;
-  background: linear-gradient(145deg, #09131d 0%, var(--bg) 38%, var(--bg-deep) 100%);
+  background: linear-gradient(145deg, #0d1626 0%, var(--bg) 38%, var(--bg-deep) 100%);
 }
 
 body {
