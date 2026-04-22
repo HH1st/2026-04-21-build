@@ -1,12 +1,6 @@
 :root {
   --bg: #07111a;
   --bg-deep: #02070c;
-  --text: #eef6ff;
-  --muted: rgba(238, 246, 255, 0.68);
-  --line: rgba(255, 255, 255, 0.16);
-  --glass: rgba(221, 239, 255, 0.09);
-  --glass-strong: rgba(240, 248, 255, 0.14);
-  --shadow: rgba(0, 0, 0, 0.24);
   --cyan: #39efff;
   --blue: #4f6fff;
   --red: #ff315a;
@@ -16,33 +10,17 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
+html,
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Segoe UI Variable Display", "Microsoft YaHei UI", "PingFang SC", sans-serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at 76% 74%, rgba(255, 49, 90, 0.2), transparent 26%),
-    radial-gradient(circle at 18% 20%, rgba(57, 239, 255, 0.22), transparent 30%),
-    radial-gradient(circle at 82% 14%, rgba(79, 111, 255, 0.22), transparent 28%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03), transparent 58%),
-    linear-gradient(145deg, #0b1822 0%, var(--bg) 38%, var(--bg-deep) 100%);
-  overflow-x: hidden;
+  overflow: hidden;
+  background: linear-gradient(145deg, #09131d 0%, var(--bg) 38%, var(--bg-deep) 100%);
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 30%);
-  mix-blend-mode: screen;
+body {
+  position: relative;
+  overflow-x: hidden;
 }
 
 .page-shell {
@@ -51,159 +29,38 @@ body::before {
   isolation: isolate;
 }
 
-.filters {
-  position: absolute;
-  width: 0;
-  height: 0;
+.scene-root,
+.scene-root canvas,
+.vignette {
+  position: fixed;
+  inset: 0;
 }
 
-.mist {
-  position: fixed;
-  inset: -14%;
+.scene-root {
   z-index: 0;
-  pointer-events: none;
-  opacity: 0.42;
-  background:
-    radial-gradient(circle at 24% 24%, rgba(57, 239, 255, 0.08), transparent 28%),
-    radial-gradient(circle at 78% 18%, rgba(79, 111, 255, 0.08), transparent 26%),
-    radial-gradient(circle at 70% 74%, rgba(255, 49, 90, 0.09), transparent 30%),
-    radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.04), transparent 34%);
-  filter: blur(120px);
-  mix-blend-mode: screen;
+  overflow: hidden;
 }
 
-.aurora {
-  position: fixed;
-  inset: auto;
-  border-radius: 50%;
-  filter: blur(72px);
-  opacity: 0.9;
-  mix-blend-mode: screen;
-  pointer-events: none;
+.scene-root canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.vignette {
   z-index: 1;
-  will-change: transform;
-  transform: translate3d(0, 0, 0) scale(1);
-}
-
-.aurora::before,
-.aurora::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
   pointer-events: none;
-}
-
-.aurora::before {
-  inset: 14% 16%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.2) 18%, rgba(255, 255, 255, 0.04) 38%, transparent 76%);
-  filter: blur(22px);
-  opacity: 0.96;
-}
-
-.aurora::after {
-  inset: -12%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04) 42%, transparent 68%);
-  filter: blur(40px);
-  opacity: 0.72;
-}
-
-.aurora-a {
-  top: 12%;
-  left: 10%;
-  width: 30vw;
-  height: 30vw;
-  min-width: 260px;
-  min-height: 260px;
-  background:
-    radial-gradient(circle at 35% 35%, rgba(250, 254, 255, 0.98), rgba(250, 254, 255, 0.28) 12%, rgba(250, 254, 255, 0.06) 24%, transparent 38%),
-    radial-gradient(circle at 44% 44%, rgba(57, 239, 255, 0.96), rgba(57, 239, 255, 0.34) 34%, rgba(57, 239, 255, 0.1) 54%, transparent 76%),
-    radial-gradient(circle at 62% 58%, rgba(150, 247, 255, 0.28), transparent 38%);
-}
-
-.aurora-b {
-  right: 8%;
-  top: 18%;
-  width: 26vw;
-  height: 26vw;
-  min-width: 220px;
-  min-height: 220px;
-  background:
-    radial-gradient(circle at 52% 48%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.06) 24%, transparent 34%),
-    radial-gradient(circle at 50% 50%, rgba(79, 111, 255, 0.9), rgba(79, 111, 255, 0.28) 38%, rgba(79, 111, 255, 0.08) 56%, transparent 78%),
-    radial-gradient(circle at 38% 60%, rgba(164, 178, 255, 0.2), transparent 34%);
-}
-
-.aurora-c {
-  left: 32%;
-  bottom: 4%;
-  width: 34vw;
-  height: 34vw;
-  min-width: 280px;
-  min-height: 280px;
-  background:
-    radial-gradient(circle at 46% 44%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.04) 24%, transparent 34%),
-    radial-gradient(circle at 50% 50%, rgba(79, 111, 255, 0.78), rgba(79, 111, 255, 0.2) 38%, rgba(79, 111, 255, 0.06) 58%, transparent 78%),
-    radial-gradient(circle at 60% 34%, rgba(153, 170, 255, 0.18), transparent 32%);
-}
-
-.aurora-d {
-  right: 10%;
-  bottom: 12%;
-  width: 28vw;
-  height: 28vw;
-  min-width: 220px;
-  min-height: 220px;
-  background:
-    radial-gradient(circle at 48% 44%, rgba(255, 245, 248, 0.84), rgba(255, 245, 248, 0.18) 12%, rgba(255, 245, 248, 0.05) 24%, transparent 34%),
-    radial-gradient(circle at 50% 50%, rgba(255, 49, 90, 0.88), rgba(255, 49, 90, 0.3) 34%, rgba(255, 49, 90, 0.08) 56%, transparent 78%),
-    radial-gradient(circle at 62% 58%, rgba(255, 120, 148, 0.24), transparent 32%);
-  opacity: 0.9;
-}
-
-.noise {
-  position: fixed;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0.09;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.28) 0.45px, transparent 0.7px),
-    radial-gradient(rgba(255, 255, 255, 0.14) 0.35px, transparent 0.65px),
-    radial-gradient(rgba(255, 255, 255, 0.1) 0.25px, transparent 0.55px);
-  background-position: 0 0, 9px 13px, 17px 5px;
-  background-size: 8px 8px, 11px 11px, 13px 13px;
-  mix-blend-mode: overlay;
-  filter: url(#film-grain);
-}
-
-.noise::before,
-.noise::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.noise::before {
-  opacity: 0.4;
-  background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.03), transparent 34%, rgba(255, 255, 255, 0.02) 68%, transparent),
-    radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.03), transparent 24%);
-  mix-blend-mode: soft-light;
-}
-
-.noise::after {
-  opacity: 0.22;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06), transparent 56%);
-  filter: blur(36px);
+    radial-gradient(circle at 50% 50%, transparent 34%, rgba(0, 0, 0, 0.08) 76%, rgba(0, 0, 0, 0.22) 100%),
+    radial-gradient(circle at 50% -6%, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 26%, rgba(0, 0, 0, 0.1) 100%);
   mix-blend-mode: screen;
-}
-
-@media (max-width: 920px) {
 }
 
 @media (max-width: 560px) {
+  .vignette {
+    background:
+      radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.1) 74%, rgba(0, 0, 0, 0.28) 100%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.016), transparent 18%, rgba(0, 0, 0, 0.12) 100%);
+  }
 }

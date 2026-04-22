@@ -3,28 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fluid Frost</title>
+  <title>Fluid Frost Three</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <svg class="filters" aria-hidden="true" focusable="false">
-    <filter id="film-grain">
-      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
-      <feColorMatrix type="saturate" values="0" />
-      <feComponentTransfer>
-        <feFuncA type="table" tableValues="0 0.08" />
-      </feComponentTransfer>
-    </filter>
-  </svg>
   <div class="page-shell">
-    <div class="noise"></div>
-    <div class="mist"></div>
-    <div class="aurora aurora-a"></div>
-    <div class="aurora aurora-b"></div>
-    <div class="aurora aurora-c"></div>
-    <div class="aurora aurora-d"></div>
+    <div id="scene-root" class="scene-root" aria-hidden="true"></div>
+    <div class="vignette"></div>
   </div>
-
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
