@@ -29,6 +29,51 @@ body {
   isolation: isolate;
 }
 
+.state-badge {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(7, 12, 22, 0.58);
+  backdrop-filter: blur(8px);
+  color: #f6f6f1;
+  font-family: "Segoe UI", "Noto Sans SC", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.state-badge__label {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+#agent-state {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #d4e8fb;
+}
+
+body[data-agent-state="idle"] #agent-state {
+  color: #d4e8fb;
+}
+
+body[data-agent-state="listening"] #agent-state {
+  color: #9ee3cf;
+}
+
+body[data-agent-state="thinking"] #agent-state {
+  color: #ffd98a;
+}
+
+body[data-agent-state="speaking"] #agent-state {
+  color: #ffb8a9;
+}
+
 .scene-root,
 .scene-root canvas,
 .vignette {
@@ -58,6 +103,12 @@ body {
 }
 
 @media (max-width: 560px) {
+  .state-badge {
+    top: 14px;
+    right: 14px;
+    padding: 7px 10px;
+  }
+
   .vignette {
     background:
       radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.1) 74%, rgba(0, 0, 0, 0.28) 100%),
