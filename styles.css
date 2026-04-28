@@ -29,6 +29,10 @@ body {
   isolation: isolate;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .state-badge {
   position: fixed;
   top: 20px;
@@ -45,6 +49,53 @@ body {
   color: #f6f6f1;
   font-family: "Segoe UI", "Noto Sans SC", sans-serif;
   letter-spacing: 0.02em;
+}
+
+.controls-panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  display: grid;
+  gap: 10px;
+  max-width: min(280px, calc(100vw - 40px));
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  background: rgba(7, 12, 22, 0.52);
+  backdrop-filter: blur(12px);
+  color: #eef5fb;
+  font-family: "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.controls-panel__button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: linear-gradient(135deg, #9ee3cf, #7ac0f2);
+  color: #04111c;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+
+.controls-panel__button:hover {
+  transform: translateY(-1px);
+}
+
+.controls-panel__button:disabled {
+  cursor: default;
+  opacity: 0.72;
+  transform: none;
+}
+
+.controls-panel__status {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(238, 245, 251, 0.82);
 }
 
 .state-badge__label {
@@ -103,10 +154,20 @@ body[data-agent-state="speaking"] #agent-state {
 }
 
 @media (max-width: 560px) {
+  .controls-panel,
   .state-badge {
     top: 14px;
-    right: 14px;
     padding: 7px 10px;
+  }
+
+  .controls-panel {
+    left: 14px;
+    right: 14px;
+    max-width: none;
+  }
+
+  .state-badge {
+    right: 14px;
   }
 
   .vignette {

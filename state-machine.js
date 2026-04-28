@@ -1,15 +1,11 @@
 export const AgentState = Object.freeze({
   IDLE: "idle",
-  LISTENING: "listening",
-  THINKING: "thinking",
-  SPEAKING: "speaking"
+  LISTENING: "listening"
 });
 
 const validTransitions = {
   [AgentState.IDLE]: [AgentState.LISTENING],
-  [AgentState.LISTENING]: [AgentState.THINKING, AgentState.IDLE],
-  [AgentState.THINKING]: [AgentState.SPEAKING, AgentState.IDLE],
-  [AgentState.SPEAKING]: [AgentState.LISTENING, AgentState.IDLE]
+  [AgentState.LISTENING]: [AgentState.IDLE]
 };
 
 export function createAgentStateMachine(initialState = AgentState.IDLE, options = {}) {
