@@ -68,6 +68,47 @@ body {
   font-family: "Segoe UI", "Noto Sans SC", sans-serif;
 }
 
+.renderer-switch {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(7, 12, 22, 0.56);
+  backdrop-filter: blur(10px);
+  color: #eef5fb;
+  font-family: "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.renderer-switch__label {
+  font-size: 12px;
+  opacity: 0.82;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.renderer-switch__select {
+  min-width: 120px;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 7px 28px 7px 10px;
+  background: linear-gradient(135deg, rgba(69, 109, 190, 0.36), rgba(74, 159, 172, 0.22));
+  color: #ecf4ff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.renderer-switch__select:focus {
+  outline: 2px solid rgba(122, 192, 242, 0.72);
+  outline-offset: 1px;
+}
+
 .controls-panel__button {
   appearance: none;
   border: 0;
@@ -168,6 +209,23 @@ body[data-agent-state="speaking"] #agent-state {
 
   .state-badge {
     right: 14px;
+  }
+
+  .renderer-switch {
+    right: 14px;
+    bottom: 14px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .renderer-switch__label {
+    font-size: 11px;
+  }
+
+  .renderer-switch__select {
+    min-width: 104px;
+    font-size: 12px;
+    padding: 6px 24px 6px 9px;
   }
 
   .vignette {

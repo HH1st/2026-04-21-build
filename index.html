@@ -10,6 +10,13 @@
   <div class="page-shell">
     <div id="scene-root" class="scene-root" aria-hidden="true"></div>
     <div class="vignette"></div>
+    <div class="renderer-switch" aria-label="渲染器切换">
+      <label class="renderer-switch__label" for="renderer-kind">Renderer</label>
+      <select id="renderer-kind" class="renderer-switch__select">
+        <option value="fluid">Fluid</option>
+        <option value="nebula">Nebula</option>
+      </select>
+    </div>
     <div class="controls-panel">
       <button id="start-vad" class="controls-panel__button" type="button">
         Enable mic

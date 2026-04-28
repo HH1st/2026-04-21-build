@@ -1,139 +1,125 @@
-import { createFluidRenderer } from "./renderer.js";
-import { AgentState, createAgentStateMachine } from "./state-machine.js";
-import { createRickyVadProvider } from "./vad-provider.js";
+import { AgentState, createAgentStateMachine } from "./core/state-machine.js";
+import { createRenderProvider } from "./render/render-provider.js";
+import { createRickyVadProvider } from "./speech/vad-provider.js";
 
-const stateBadge = document.getElementById("agent-state");
-const stateBadgeContainer = stateBadge?.closest(".state-badge");
-const controlsPanel = document.querySelector(".controls-panel");
-const startVadButton = document.getElementById("start-vad");
-const micStatus = document.getElementById("mic-status");
-
-let vadProvider = null;
-let isVadStarting = false;
-
-function isDevModeFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("dev")) {
-    return true;
-  }
-
-  const mode = params.get("mode")?.toLowerCase();
-  return mode === "dev";
-}
-
-const isDevMode = isDevModeFromQuery();
-
-if (!isDevMode) {
-  stateBadgeContainer?.setAttribute("hidden", "");
-  controlsPanel?.setAttribute("hidden", "");
-}
-
-function applyStateToUI(state) {
-  document.body.dataset.agentState = state;
-  if (stateBadge) {
-    stateBadge.textContent = state;
-  }
-}
+// --- state ---------------------------------------------------------------
 
 const agentStateMachine = createAgentStateMachine(AgentState.IDLE, {
   onTransition({ previousState, currentState }) {
+    document.body.dataset.agentState = currentState;
+    const badge = document.getElementById("agent-state");
+    if (badge) badge.textContent = currentState;
     window.dispatchEvent(
       new CustomEvent("agent-state-change", {
         detail: { previousState, currentState }
       })
     );
-    applyStateToUI(currentState);
   }
 });
 
-function setAgentState(nextState) {
-  const changed = agentStateMachine.transitionTo(nextState);
+const getState = () => agentStateMachine.getState();
+const setState = (next) => {
+  const changed = agentStateMachine.transitionTo(next);
   if (!changed) {
-    console.warn(
-      `[state-machine] Invalid transition: ${agentStateMachine.getState()} -> ${nextState}`
-    );
+    console.warn(`[state-machine] Invalid transition: ${getState()} -> ${next}`);
   }
   return changed;
-}
-
-window.agentStateMachine = {
-  AgentState,
-  getState: () => agentStateMachine.getState(),
-  setState: setAgentState
 };
 
-function setMicStatus(message) {
-  if (micStatus) {
-    micStatus.textContent = message;
-  }
+window.agentStateMachine = { AgentState, getState, setState };
+
+// --- render provider -----------------------------------------------------
+
+let renderProvider = null;
+let activeRenderKind = "fluid";
+
+function mountRenderer(kind) {
+  const mount = document.getElementById("scene-root");
+  if (!mount) return;
+
+  renderProvider?.stop();
+  renderProvider = createRenderProvider({ mount, getState, kind });
+  renderProvider.start();
+  activeRenderKind = kind;
 }
 
-async function enableVad() {
-  if (vadProvider?.isActive() || isVadStarting) {
-    return;
-  }
+document.getElementById("renderer-kind")?.addEventListener("change", (event) => {
+  const nextKind = event.target?.value === "nebula" ? "nebula" : "fluid";
+  if (nextKind !== activeRenderKind) mountRenderer(nextKind);
+});
 
-  isVadStarting = true;
+// --- dev mode (vad + debug UI) ------------------------------------------
 
-  if (startVadButton) {
-    startVadButton.disabled = true;
-    startVadButton.textContent = "Starting mic...";
-  }
+function isDevMode() {
+  const params = new URLSearchParams(window.location.search);
+  return params.has("dev") || params.get("mode")?.toLowerCase() === "dev";
+}
 
-  setMicStatus("Requesting microphone access...");
+function setupDevUI() {
+  const startBtn = document.getElementById("start-vad");
+  const micStatus = document.getElementById("mic-status");
+  const setMicStatus = (msg) => { if (micStatus) micStatus.textContent = msg; };
 
-  try {
-    vadProvider ??= createRickyVadProvider({
-      onSpeechStart: () => {
-        setMicStatus("Speech detected");
-        setAgentState(AgentState.LISTENING);
-      },
-      onSpeechEnd: () => {
-        setMicStatus("Waiting for speech");
-        setAgentState(AgentState.IDLE);
-      },
-      onError: (error) => {
-        console.error("[vad-provider] Failed to start VAD", error);
+  let vadProvider = null;
+  let isStarting = false;
+
+  async function enableVad() {
+    if (vadProvider?.isActive() || isStarting) return;
+    isStarting = true;
+
+    if (startBtn) {
+      startBtn.disabled = true;
+      startBtn.textContent = "Starting mic...";
+    }
+    setMicStatus("Requesting microphone access...");
+
+    try {
+      vadProvider ??= createRickyVadProvider({
+        onSpeechStart: () => {
+          setMicStatus("Speech detected");
+          setState(AgentState.LISTENING);
+        },
+        onSpeechEnd: () => {
+          setMicStatus("Waiting for speech");
+          setState(AgentState.IDLE);
+        },
+        onError: (error) => console.error("[vad-provider] Failed to start VAD", error)
+      });
+
+      await vadProvider.start();
+      setMicStatus("VAD active");
+      if (startBtn) startBtn.textContent = "Mic enabled";
+    } catch (error) {
+      setMicStatus(
+        error?.message?.includes("library is unavailable")
+          ? "VAD library failed to load"
+          : "Microphone permission denied or unavailable"
+      );
+      if (startBtn) {
+        startBtn.disabled = false;
+        startBtn.textContent = "Enable mic";
       }
-    });
-
-    await vadProvider.start();
-    setMicStatus("VAD active");
-
-    if (startVadButton) {
-      startVadButton.textContent = "Mic enabled";
+    } finally {
+      isStarting = false;
     }
-  } catch (error) {
-    setMicStatus(
-      error?.message?.includes("library is unavailable")
-        ? "VAD library failed to load"
-        : "Microphone permission denied or unavailable"
-    );
-
-    if (startVadButton) {
-      startVadButton.disabled = false;
-      startVadButton.textContent = "Enable mic";
-    }
-  } finally {
-    isVadStarting = false;
   }
+
+  startBtn?.addEventListener("click", enableVad);
+
+  window.addEventListener("beforeunload", () => vadProvider?.stop());
+  return () => vadProvider?.stop();
 }
 
-applyStateToUI(agentStateMachine.getState());
+// --- bootstrap -----------------------------------------------------------
 
-const mount = document.getElementById("scene-root");
-const fluidRenderer = createFluidRenderer({
-  mount,
-  getState: () => agentStateMachine.getState()
-});
+document.body.dataset.agentState = getState();
+mountRenderer(activeRenderKind);
 
-if (isDevMode) {
-  startVadButton?.addEventListener("click", () => {
-    enableVad();
-  });
+if (isDevMode()) {
+  setupDevUI();
+} else {
+  document.querySelector(".state-badge")?.setAttribute("hidden", "");
+  document.querySelector(".controls-panel")?.setAttribute("hidden", "");
 }
 
-window.addEventListener("beforeunload", () => {
-  vadProvider?.stop();
-  fluidRenderer.cleanup();
-});
+window.addEventListener("beforeunload", () => renderProvider?.stop());

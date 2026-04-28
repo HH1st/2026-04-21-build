@@ -1,5 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.177.0/build/three.module.js";
-import { AgentState } from "./state-machine.js";
+import { AgentState } from "../core/state-machine.js";
 import { fluidFragmentShader, fluidVertexShader } from "./fluid-shaders.js";
 
 const RENDER_CONFIG = {
@@ -13,7 +13,7 @@ const RENDER_CONFIG = {
   transitionSmoothing: 3.8,
   stateAnimation: {
     idle: { pointerLerp: 0.09, timeScale: 1.2, listeningMix: 0.0 },
-    listening: { pointerLerp: 0.042, timeScale: 0.82, listeningMix: 1.0 }
+    listening: { pointerLerp: 0.042, timeScale: 0.74, listeningMix: 1.0 }
   }
 };
 
@@ -131,16 +131,17 @@ export function createFluidRenderer(options = {}) {
   window.addEventListener("resize", onWindowResize);
   window.addEventListener("pointermove", onPointerMove);
 
-  function cleanup() {
+  function stop() {
     renderer.setAnimationLoop(null);
     window.removeEventListener("resize", onWindowResize);
     window.removeEventListener("pointermove", onPointerMove);
     renderer.dispose();
     material.dispose();
     plane.geometry.dispose();
+    renderer.domElement.remove();
   }
 
   return {
-    cleanup
+    stop
   };
 }
